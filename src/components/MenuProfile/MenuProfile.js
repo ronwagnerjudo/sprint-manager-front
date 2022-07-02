@@ -12,8 +12,8 @@ const MenuProfile = (props) => {
 
           <Dropdown.Menu variant="dark">
             <Dropdown.Header>{props.email}</Dropdown.Header>
-            <Dropdown.Item href="https://127.0.0.1:3000/settings">Settings</Dropdown.Item>
-            <Dropdown.Item href="https://127.0.0.1:5000/logout" className="text-danger" style={{fontWeight: "bold"}}>Logout</Dropdown.Item>
+            <Dropdown.Item href="http://127.0.0.1:3000/settings">Settings</Dropdown.Item>
+            <Dropdown.Item href="http://127.0.0.1:5000/logout" className="text-danger" style={{fontWeight: "bold"}}>Logout</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </ul>

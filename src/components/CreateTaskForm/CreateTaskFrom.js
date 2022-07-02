@@ -28,15 +28,14 @@ function CreateTaskForm(props) {
             >
               <Form.Label>Task duration</Form.Label>
               <Form.Select aria-label="" onChange={props.timeChange}>
-                <option value="30m">30m</option>
-                <option value="1h">1h</option>
-                <option value="2h">2h</option>
-                <option value="3h">3h</option>
-                <option value="4h">4h</option>
-                <option value="5h">5h</option>
-                <option value="6h">6h</option>
-                <option value="7h">7h</option>
-                <option value="8h">8h</option>
+                <option value="1">1h</option>
+                <option value="2">2h</option>
+                <option value="3">3h</option>
+                <option value="4">4h</option>
+                <option value="5">5h</option>
+                <option value="6">6h</option>
+                <option value="7">7h</option>
+                <option value="8">8h</option>
               </Form.Select>
             </Form.Group>
           </Form>

@@ -4,61 +4,63 @@ import Page from '../wrappers/Page'
 import Task from "../components/Task/Task"
 import Alert from "react-bootstrap/Alert";
 import CreateTaskForm from "../components/CreateTaskForm/CreateTaskFrom";
+import axios from "axios";
+
+axios.defaults.withCredentials = true
+
 
 class Tasks extends Component {
 	constructor() {
 		super()
 		this.state = {
-			data: [
-				{ taskName: "Task 1", time: "3h", date: "13.1.22 12:45" },
-				{ taskName: "Task 2", time: "1h", date: "15.1.22 12:45" },
-				{ taskName: "Task 3", time: "1h", date: "16.1.22 12:45" },
-				{ taskName: "Task 4", time: "6h", date: "11.1.22 12:45" },
-				{ taskName: "Working on wagner task", time: "2d", date: "13.1.22 12:45" },
-				{ taskName: "Task 6", time: "4d", date: "15.1.22 12:45" },
-				{ taskName: "Task 7", time: "3h", date: "12.12.22 12:45" },
-				{ taskName: "Task 8", time: "1h", date: "12.12.22 12:45" },
-				{ taskName: "Task 9", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Working on wagner task", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Task 9", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Working on wagner task", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Working on wagner task", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Working on wagner task", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Working on wagner task", time: "2d", date: "13.1.22 12:45" },
-				{ taskName: "Task 6", time: "4d", date: "15.1.22 12:45" },
-				{ taskName: "Task 7", time: "3h", date: "12.12.22 12:45" },
-				{ taskName: "Task 8", time: "1h", date: "12.12.22 12:45" },
-				{ taskName: "Task 9", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Working on wagner task", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Task 9", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Working on wagner task", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Working on wagner task", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Working on wagner task", time: "1h", date: "12.8.22 12:45" },
-				{ taskName: "Task 10", time: "5h", date: "11.6.22 12:45" }
-			],
+			data: [],
 			deletepopup: 0,
 			showForm: false,
 			newTaskForm: {
-				taskName: "",
-				taskTime: "30m"
+				task_name: "",
+				task_time: "1"
 			}
 		}
 	}
 
-	async DeleteTask(id) {
-		console.log(id)
-		this.setState((prevState) => {
-			return {
-				...prevState,
-				data: prevState.data.filter((item, index) => index !== id),
-				deletepopup: (prevState.deletepopup + 1)
-			}
-		})
-		setTimeout(() => {
+	componentDidMount() {
+		this.GetTasks();
+	}
+
+	async GetTasks() {
+		axios.get("http://127.0.0.1:3030/all").then((resp) => {
+			let tasks = resp.data.tasks
 			this.setState((prevState) => {
-				return { ...prevState, deletepopup: (prevState.deletepopup - 1) }
+				return {
+					...prevState,
+					data: tasks,
+					loading: false
+				}
 			})
-		}, 2000)
+		}).catch((err) => {
+			console.error("Unable to fetch tasks from API...")
+			console.error(err)
+		})
+	}
+
+	async DeleteTask(id) {
+		axios.delete("http://127.0.0.1:3030/delete", {data: {id: this.state.data[id].id}}).then((resp) => {
+			this.setState((prevState) => {
+				return {
+					...prevState,
+					data: prevState.data.filter((item, index) => index !== id),
+					deletepopup: (prevState.deletepopup + 1)
+				}
+			})
+			setTimeout(() => {
+				this.setState((prevState) => {
+					return { ...prevState, deletepopup: (prevState.deletepopup - 1) }
+				})
+			}, 2000)
+		}).catch((err) => {
+			console.error("Unable to delete task...")
+			console.error(err)
+		})
 	}
 
 	handleCloseForm = () => {
@@ -68,16 +70,13 @@ class Tasks extends Component {
 		this.setState(prevState => { return { ...prevState, showForm: true } })
 	}
 
-	handleCreateTask = () => {
-		console.log("Start")
-		this.setState((prevState) => {
-			return {
-				...prevState,
-				data: [...prevState.data, { taskName: prevState.newTaskForm.taskName, time: prevState.newTaskForm.taskTime, date: "13.1.22 12:45" }],
-				newTaskForm: { taskName: "", taskTime: "30m" }
-
-			}
+	handleCreateTask = async () => {
+		axios.post("http://127.0.0.1:3030/add", {task_name: this.state.newTaskForm.task_name, task_time: this.state.newTaskForm.task_time}).then((resp) => {
+			this.setState((prevState) => {
+				this.GetTasks()
+			})
 		})
+		
 		this.handleCloseForm()
 	}
 
@@ -86,8 +85,8 @@ class Tasks extends Component {
 			return {
 				...prevState,
 				newTaskForm: {
-					taskTime: prevState.newTaskForm.taskTime,
-					taskName: event.target.value
+					task_time: prevState.newTaskForm.task_time,
+					task_name: event.target.value
 				}
 			}
 		})
@@ -97,8 +96,8 @@ class Tasks extends Component {
 			return {
 				...prevState,
 				newTaskForm: {
-					taskTime: event.target.value,
-					taskName: prevState.newTaskForm.taskName
+					task_time: event.target.value,
+					task_name: prevState.newTaskForm.task_name
 				}
 			}
 		})
@@ -117,7 +116,7 @@ class Tasks extends Component {
 					{[
 						this.state.data.map((item, index) => {
 							return (
-								<Task duration={item.time} date={item.date} name={item.taskName} key={index} DeleteTask={this.DeleteTask.bind(this)} id={index} />
+								<Task duration={`${item.task_time}h`} date={item.task_start_datetime} name={item.task_name} key={index} DeleteTask={this.DeleteTask.bind(this)} id={index} />
 							)
 						})
 					]}
