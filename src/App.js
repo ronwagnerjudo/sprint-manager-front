@@ -1,22 +1,26 @@
+import React from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Menu from "./pages/Menu/Menu"
-import Homepage from "./pages/Homepage/Homepage"
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Tasks from './pages/Tasks/Tasks';
-import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import Login from './pages/Login';
+import Tasks from './pages/Tasks';
+import { BrowserRouter , Routes, Route, Navigate } from 'react-router-dom';
+import PrivateRoute from './wrappers/PrivateRoute';
+import UserSettings from './pages/UserSettings';
+
 
 function App() {
+  
   return (
     <div className="App">
-      <Menu />
-      <BrowserRouter>
+      <BrowserRouter >
         <Routes>
-          <Route index path="*" element={<Homepage />} />
-          <Route path="/tasks" element={<PrivateRoute><Tasks /></PrivateRoute>} />
-          <Route path="/settings" element={<></>} />
+          <Route index element={<Navigate to="tasks" />} />
+          <Route path="login" element={<Login />} />
+          <Route path="tasks" element={<PrivateRoute><Tasks /></PrivateRoute>} />
+          <Route path="settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />
+          <Route path="*" element={<p>There's nothing here: 404!</p>} />
         </Routes>
-      </BrowserRouter>
+      </BrowserRouter >
     </div>
   );
 }
