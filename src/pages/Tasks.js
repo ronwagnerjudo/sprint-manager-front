@@ -73,8 +73,15 @@ class Tasks extends Component {
 	handleCreateTask = async () => {
 		axios.post("http://127.0.0.1:3030/add", {task_name: this.state.newTaskForm.task_name, task_time: this.state.newTaskForm.task_time}).then((resp) => {
 			this.setState((prevState) => {
-				this.GetTasks()
+				return {
+					...prevState,
+					newTaskForm: {
+						task_name: "",
+						task_time: "1"
+					}
+				}
 			})
+			this.GetTasks()
 		})
 		
 		this.handleCloseForm()
