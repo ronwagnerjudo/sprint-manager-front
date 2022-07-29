@@ -28,7 +28,7 @@ class Tasks extends Component {
 	}
 
 	async GetTasks() {
-		axios.get("http://127.0.0.1:3030/all").then((resp) => {
+		axios.get("http://localhost/api/tasks-api/all").then((resp) => {
 			let tasks = resp.data.tasks
 			this.setState((prevState) => {
 				return {
@@ -44,7 +44,7 @@ class Tasks extends Component {
 	}
 
 	async DeleteTask(id) {
-		axios.delete("http://127.0.0.1:3030/delete", {data: {id: this.state.data[id].id}}).then((resp) => {
+		axios.delete("http://localhost/api/tasks-api/delete", {data: {id: this.state.data[id].id}}).then((resp) => {
 			this.setState((prevState) => {
 				return {
 					...prevState,
@@ -71,7 +71,7 @@ class Tasks extends Component {
 	}
 
 	handleCreateTask = async () => {
-		axios.post("http://127.0.0.1:3030/add", {task_name: this.state.newTaskForm.task_name, task_time: this.state.newTaskForm.task_time}).then((resp) => {
+		axios.post("http://localhost/api/tasks-api/add", {task_name: this.state.newTaskForm.task_name, task_time: this.state.newTaskForm.task_time}).then((resp) => {
 			this.setState((prevState) => {
 				return {
 					...prevState,

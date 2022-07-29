@@ -1,9 +1,10 @@
 import React, { Component, forwardRef } from "react"
 import Page from "../wrappers/Page"
-import {Row, Col, Form, Button} from "react-bootstrap"
+import { Row, Col, Form, Button } from "react-bootstrap"
 import settingsImage from '../images/settings.svg'
 import ReactDatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios"
 
 const styles = {
 	container: {
@@ -19,50 +20,76 @@ const styles = {
 		alignItems: "center"
 	},
 	dateInput: {
-    display: "block",
-    width: "100%",
-    padding: "0.375rem 0.75rem",
-    fontSize: "1rem",
-    fontWeight: "400",
-    lineHeight: "1.5",
-    color: "#212529",
-    backgroundColor: "#fff",
-    backgroundClip: "padding-box",
-    border: "1px solid #ced4da",
-    appearance: "none",
-    borderRadius: "0.25rem",
-    transition: "border-color .15s ease-in-out,box-shadow"
-  }
+		display: "block",
+		width: "100%",
+		padding: "0.375rem 0.75rem",
+		fontSize: "1rem",
+		fontWeight: "400",
+		lineHeight: "1.5",
+		color: "#212529",
+		backgroundColor: "#fff",
+		backgroundClip: "padding-box",
+		border: "1px solid #ced4da",
+		appearance: "none",
+		borderRadius: "0.25rem",
+		transition: "border-color .15s ease-in-out,box-shadow"
+	}
 }
 
 const DatePicker = forwardRef(({ value, onClick }, ref) => (
-	<Form.Control onClick={onClick} ref={ref} value={value}/>
+	<Form.Control onClick={onClick} ref={ref} value={value} />
 ));
 
 class UserSettings extends Component {
 	constructor() {
 		super()
 		this.state = {
-				workingHours: {
-					from: "8:00",
-					until: "17:00"
-				},
-				workingPref: "None",
-				startDate: new Date(),
-				endDate: new Date()
+			workingHours: {
+				from: "8:00",
+				until: "17:00"
+			},
+			workingPref: "None",
+			startDate: new Date(),
+			endDate: new Date()
 		}
 	}
-	
-	handleStartDateChange = (date) =>{
-		this.setState((prevState) => {
-			return {...prevState, startDate: date}
-		})	
+
+	componentDidMount() {
+		this.GetSettings();
 	}
-	
-	handleEndDateChange = (date) =>{
+
+	async GetSettings() {
+		axios.get(`http://localhost/api/user-api/get-user-details`).then((resp) => {
+			let settings = resp.data.user_details
+			console.log({settings})
+			this.setState((prevState) => {
+				return {
+					...prevState,
+					workingHours: {
+						from: `${settings.userStartWorkHours}`,
+						until: `${settings.userEndWorkHours}`
+					},
+					workingPref: settings.userPreference,
+					startDate: new Date(settings.userSprintStartDate),
+					endDate: new Date(settings.userSprintEndtDate)
+				}
+			})
+		}).catch((err) => {
+			console.error("Unable to fetch user settings from API...")
+			console.error(err)
+		})
+	}
+
+	handleStartDateChange = (date) => {
 		this.setState((prevState) => {
-			return {...prevState, endDate: date}
-		})	
+			return { ...prevState, startDate: date }
+		})
+	}
+
+	handleEndDateChange = (date) => {
+		this.setState((prevState) => {
+			return { ...prevState, endDate: date }
+		})
 	}
 
 	handleWorkingHoursFrom = (event) => {
@@ -74,7 +101,7 @@ class UserSettings extends Component {
 					until: prevState.workingHours.until
 				}
 			}
-		})	
+		})
 	}
 
 	handleWorkingHoursUntil = (event) => {
@@ -86,7 +113,7 @@ class UserSettings extends Component {
 					until: event.target.value
 				}
 			}
-		})	
+		})
 	}
 
 	handleChangeWorkPref = (event) => {
@@ -95,45 +122,57 @@ class UserSettings extends Component {
 				...prevState,
 				workingPref: event.target.value
 			}
-		})	
+		})
 	}
 
 	timeInputes = (defaultValue) => {
-		const list = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
-		return([
+		const list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+		return ([
 			list.map(item => {
 				const time = `${item}:00`
-				return(
+				return (
 					time === defaultValue ?
-						<option value={time} selected >{time}</option>:
+						<option value={time} selected >{time}</option> :
 						<option value={time}>{time}</option>
 				)
 			})
 		])
 	}
 
+	saveSettings = () => {
+		axios.post(`http://localhost/api/user-api/user-settings`, { 
+			"user_preference": this.state.workingPref,
+			"start_work_hours": this.state.workingHours.from,
+			"end_work_hours": this.state.workingHours.until,
+			"sprint_start_date": this.state.startDate,
+			"sprint_end_date": this.state.endDate
+		}).then((resp) => {
+			this.GetSettings()
+		})
+	}
+
 	render() {
 		return (
 			<Page>
 				<Row style={styles.container}>
-					<Col><img src={settingsImage} alt="Settings" style={styles.image}/></Col>
+					<Col><img src={settingsImage} alt="Settings" style={styles.image} /></Col>
 					<Col>
 						<h2>Settings</h2>
 						<Form className="p-4">
 							<Form.Group className="mb-3" controlId="formBasicEmail">
 								<Form.Label>Working Hours</Form.Label>
-									<Row>
-										<Col>
-											<Form.Select onChange={this.handleWorkingHoursFrom.bind(this)}>
-												{this.timeInputes(this.state.workingHours.from)}
-											</Form.Select>
-										</Col>
-										<Col>
-											<Form.Select onChange={this.handleWorkingHoursUntil.bind(this)}>
-												{this.timeInputes(this.state.workingHours.until)}
-											</Form.Select>
-										</Col>
-									</Row>
+								<Row>
+									<Col>
+										<Form.Select onChange={this.handleWorkingHoursFrom.bind(this)}>
+											{this.timeInputes(this.state.workingHours.from)}
+										</Form.Select>
+									</Col>
+									<Col>
+										<Form.Select onChange={this.handleWorkingHoursUntil.bind(this)}>
+											{this.timeInputes(this.state.workingHours.until)}
+										</Form.Select>
+									</Col>
+								</Row>
 								<Form.Text className="text-muted">
 									Working hours: {this.state.workingHours.from} - {this.state.workingHours.until}
 								</Form.Text>
@@ -144,7 +183,7 @@ class UserSettings extends Component {
 									<Col>
 										<ReactDatePicker
 											selected={this.state.startDate}
-											onChange={(date)=> this.handleStartDateChange(date)}
+											onChange={(date) => this.handleStartDateChange(date)}
 											selectsStart
 											startDate={this.state.startDate}
 											endDate={this.state.endDate}
@@ -154,7 +193,7 @@ class UserSettings extends Component {
 									<Col>
 										<ReactDatePicker
 											selected={this.state.endDate}
-											onChange={(date)=> this.handleEndDateChange(date)}
+											onChange={(date) => this.handleEndDateChange(date)}
 											selectsEnd
 											startDate={this.state.startDate}
 											endDate={this.state.endDate}
@@ -168,15 +207,15 @@ class UserSettings extends Component {
 								<Form.Label className="mb-2">Schedule Preferences</Form.Label><br />
 								{
 									["None", "Morning", "After Noon"].map(item => {
-										return(
+										return (
 											this.state.workingPref === item ?
-											<Form.Check inline name="timePref" label={item} type="radio" value={item} onChange={this.handleChangeWorkPref.bind(this)} id={item} checked="yes"/>:
-											<Form.Check inline name="timePref" label={item} type="radio" value={item} onChange={this.handleChangeWorkPref.bind(this)} id={item} />		
+												<Form.Check inline name="timePref" label={item} type="radio" value={item} onChange={this.handleChangeWorkPref.bind(this)} id={item} checked="yes" /> :
+												<Form.Check inline name="timePref" label={item} type="radio" value={item} onChange={this.handleChangeWorkPref.bind(this)} id={item} />
 										)
 									})
 								}
 							</Form.Group>
-							<Button style={{color: "white", backgroundColor: "#683ba4", borderColor: "#683ba4"}} type="submit">
+							<Button onClick={this.saveSettings.bind(this)} style={{ color: "white", backgroundColor: "#683ba4", borderColor: "#683ba4" }} type="submit">
 								Submit
 							</Button>
 						</Form>

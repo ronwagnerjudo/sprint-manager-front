@@ -7,13 +7,13 @@ const MenuProfile = (props) => {
       <ul className="navbar-nav d-flex">
         <Dropdown className="d-inline mx-2" drop="down">
           <Dropdown.Toggle id="dropdown-autoclose-true" variant="dark">
-            <img src={props.picture} width="40" height="40" className="rounded-circle" alt='profile'/>
+            <img src={props.picture} width="40" height="40" className="rounded-circle" alt='profile' referrerpolicy="no-referrer"/>
           </Dropdown.Toggle>
 
           <Dropdown.Menu variant="dark">
             <Dropdown.Header>{props.email}</Dropdown.Header>
-            <Dropdown.Item href="http://127.0.0.1:3000/settings">Settings</Dropdown.Item>
-            <Dropdown.Item href="http://127.0.0.1:5000/logout" className="text-danger" style={{fontWeight: "bold"}}>Logout</Dropdown.Item>
+            <Dropdown.Item href="http://localhost/settings">Settings</Dropdown.Item>
+            <Dropdown.Item href="http://localhost/api/user-api/logout" className="text-danger" style={{fontWeight: "bold"}}>Logout</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </ul>

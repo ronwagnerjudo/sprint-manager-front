@@ -26,7 +26,7 @@ class Page extends Component {
 
 	async LoadUserInfo() {
 		await sleep(500)
-		axios.get("http://127.0.0.1:5000/userinfo", { withCredentials: true }).then((resp) => {
+		axios.get(`http://localhost/api/user-api/userinfo`, { withCredentials: true }).then((resp) => {
 			let user = resp.data
 			this.setState((prevState) => {
 				return {
