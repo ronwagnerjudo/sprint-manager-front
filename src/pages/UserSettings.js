@@ -62,16 +62,25 @@ class UserSettings extends Component {
 		axios.get(`http://localhost/api/user-api/get-user-details`).then((resp) => {
 			let settings = resp.data.user_details
 			console.log({settings})
+			let userSprintStartDate, userSprintEndtDate
+			userSprintStartDate = new Date(settings.userSprintStartDate)
+			userSprintEndtDate = new Date(settings.userSprintEndtDate)
+			if (Object.prototype.toString.call(userSprintStartDate) === "[objectuserSprintStartDateDate]" || isNaN(userSprintStartDate)) {
+			  const listStartDate = settings.userSprintStartDate.split("/")
+			  const listSEndDate = settings.userSprintEndtDate.split("/")
+			  userSprintStartDate = new Date(`${listStartDate[1]} ${listStartDate[0]} ${listStartDate[2]}`)
+			  userSprintEndtDate = new Date(`${listSEndDate[1]} ${listSEndDate[0]} ${listSEndDate[2]}`)
+			}
 			this.setState((prevState) => {
 				return {
 					...prevState,
 					workingHours: {
-						from: `${settings.userStartWorkHours}`,
-						until: `${settings.userEndWorkHours}`
+						from: `${settings.userStartWorkHours}`.split(":")[0],
+						until: `${settings.userEndWorkHours}`.split(":")[0]
 					},
 					workingPref: settings.userPreference,
-					startDate: new Date(settings.userSprintStartDate),
-					endDate: new Date(settings.userSprintEndtDate)
+					startDate: userSprintStartDate,
+					endDate: userSprintEndtDate
 				}
 			})
 		}).catch((err) => {
@@ -127,11 +136,13 @@ class UserSettings extends Component {
 
 	timeInputes = (defaultValue) => {
 		const list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+		const defaultVal = defaultValue.split(":").length == 2 ? defaultValue : `${defaultValue}:00`
+
 		return ([
 			list.map(item => {
-				const time = `${item}:00`
+				let time =  `${item}:00`
 				return (
-					time === defaultValue ?
+					time === defaultVal ?
 						<option value={time} selected >{time}</option> :
 						<option value={time}>{time}</option>
 				)
@@ -144,14 +155,16 @@ class UserSettings extends Component {
 			"user_preference": this.state.workingPref,
 			"start_work_hours": this.state.workingHours.from,
 			"end_work_hours": this.state.workingHours.until,
-			"sprint_start_date": this.state.startDate,
-			"sprint_end_date": this.state.endDate
+			"sprint_start_date": this.state.startDate.toLocaleDateString(),
+			"sprint_end_date": this.state.endDate.toLocaleDateString()
 		}).then((resp) => {
 			this.GetSettings()
 		})
 	}
 
 	render() {
+		let start = this.state.workingHours.from.split(":").length == 2 ? this.state.workingHours.from : `${this.state.workingHours.from}:00`
+		let end = this.state.workingHours.until.split(":").length == 2 ? this.state.workingHours.until : `${this.state.workingHours.until}:00`
 		return (
 			<Page>
 				<Row style={styles.container}>
@@ -174,7 +187,7 @@ class UserSettings extends Component {
 									</Col>
 								</Row>
 								<Form.Text className="text-muted">
-									Working hours: {this.state.workingHours.from} - {this.state.workingHours.until}
+									Working hours: {start} - {end}
 								</Form.Text>
 							</Form.Group>
 							<Form.Group className="mb-4">

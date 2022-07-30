@@ -1,7 +1,9 @@
 FROM node:18 AS builder
 WORKDIR /app
+COPY ./package.json ./package.json
+RUN npm install --legacy-peer-deps
 COPY . .
-RUN npm install --legacy-peer-deps && npm run build
+RUN npm run build
 
 FROM nginx:alpine
 WORKDIR /usr/share/nginx/html

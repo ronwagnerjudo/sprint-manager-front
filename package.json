@@ -18,10 +18,10 @@
     "jquery": "^3.6.0",
     "js-cookie": "^3.0.1",
     "popper.js": "^1.16.1",
-    "react": "^18.1.0",
+    "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-datepicker": "^4.8.0",
-    "react-dom": "^18.1.0",
+    "react-dom": "^18.2.0",
     "react-loading-screen": "^0.0.17",
     "react-router-dom": "^6.3.0",
     "react-schedule-meeting": "^0.2.7",
@@ -52,5 +52,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-preset-env": "^7.7.2"
   }
 }
