@@ -156,8 +156,8 @@ class UserSettings extends Component {
 	saveSettings = () => {
 		axios.post(`http://localhost/api/user-api/user-settings`, { 
 			"user_preference": this.state.workingPref,
-			"start_work_hours": this.state.workingHours.from,
-			"end_work_hours": this.state.workingHours.until,
+			"start_work_hours": this.state.workingHours.from.split(":")[0],
+			"end_work_hours": this.state.workingHours.until.split(":")[0],
 			"sprint_start_date": this.state.startDate.toLocaleDateString(),
 			"sprint_end_date": this.state.endDate.toLocaleDateString()
 		}).then((resp) => {
