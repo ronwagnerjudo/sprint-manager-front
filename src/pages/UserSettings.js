@@ -65,7 +65,9 @@ class UserSettings extends Component {
 			let userSprintStartDate, userSprintEndtDate
 			userSprintStartDate = new Date(settings.userSprintStartDate)
 			userSprintEndtDate = new Date(settings.userSprintEndtDate)
-			if (Object.prototype.toString.call(userSprintStartDate) === "[objectuserSprintStartDateDate]" || isNaN(userSprintStartDate)) {
+			console.log("Before")
+			if (isNaN(userSprintStartDate) == false) {
+			  console.log("After")
 			  const listStartDate = settings.userSprintStartDate.split("/")
 			  const listSEndDate = settings.userSprintEndtDate.split("/")
 			  userSprintStartDate = new Date(`${listStartDate[1]} ${listStartDate[0]} ${listStartDate[2]}`)
