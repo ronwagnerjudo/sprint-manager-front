@@ -63,10 +63,11 @@ class UserSettings extends Component {
 			let settings = resp.data.user_details
 			console.log({settings})
 			let userSprintStartDate, userSprintEndtDate
-			userSprintStartDate = new Date(settings.userSprintStartDate)
-			userSprintEndtDate = new Date(settings.userSprintEndtDate)
-			console.log("Before")
-			if (isNaN(userSprintStartDate) == false) {
+			userSprintStartDate = Date.parse(settings.userSprintStartDate)
+			userSprintEndtDate = Date.parse(settings.userSprintEndtDate)
+			userSprintStartDate = new Date(userSprintStartDate)
+			userSprintEndtDate = new Date(userSprintEndtDate)
+			if (settings.userSprintStartDate.split("/").length == 3) {
 			  console.log("After")
 			  const listStartDate = settings.userSprintStartDate.split("/")
 			  const listSEndDate = settings.userSprintEndtDate.split("/")
