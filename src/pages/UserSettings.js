@@ -158,8 +158,8 @@ class UserSettings extends Component {
 			"user_preference": this.state.workingPref,
 			"start_work_hours": this.state.workingHours.from.split(":")[0],
 			"end_work_hours": this.state.workingHours.until.split(":")[0],
-			"sprint_start_date": this.state.startDate.toLocaleDateString(),
-			"sprint_end_date": this.state.endDate.toLocaleDateString()
+			"sprint_start_date": this.state.startDate.toLocaleDateString('en-GB'),
+			"sprint_end_date": this.state.endDate.toLocaleDateString('en-GB')
 		}).then((resp) => {
 			this.GetSettings()
 		})
